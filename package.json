@@ -1,0 +1,67 @@
+{
+  "name": "@exec402/core",
+  "version": "0.1.1",
+  "description": "Core SDK for exec402 protocol",
+  "keywords": [
+    "exec402",
+    "x402",
+    "typescript",
+    "payment",
+    "crypto",
+    "evm",
+    "solana",
+    "permit",
+    "permit2",
+    "eip3009"
+  ],
+  "author": "exec402",
+  "license": "MIT",
+  "homepage": "https://github.com/exec402/sdk-core#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/exec402/sdk-core.git"
+  },
+  "bugs": {
+    "url": "https://github.com/exec402/sdk-core/issues"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "clean": "rm -rf dist",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "axios": "^1.11.0",
+    "viem": "^2.38.6",
+    "x402": "^0.7.3",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsup": "^8.4.0",
+    "typescript": "^5.8.3",
+    "vitest": "^3.0.0"
+  },
+  "peerDependencies": {
+    "viem": "^2.0.0"
+  }
+}
+
