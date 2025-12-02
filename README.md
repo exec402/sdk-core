@@ -1,6 +1,6 @@
 # @exec402/core
 
-"Core SDK for exec402 protocol
+Core SDK for exec402 protocol
 
 ## Installation
 

@@ -9,7 +9,7 @@ import type {
   PermitEvmPayloadAuthorization,
   PaymentRequirements,
 } from "../types";
-import { erc20PermitAbi } from "../abis/erc20PermitAbi";
+import { erc20PermitAbi } from "../../abis";
 
 export const permitTypes = {
   Permit: [

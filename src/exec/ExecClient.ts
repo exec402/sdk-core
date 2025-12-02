@@ -1,8 +1,17 @@
 import axios, { type AxiosInstance } from "axios";
+import type { Hash, PublicClient } from "viem";
 import type { Signer, MultiNetworkSigner } from "x402/types";
 
 import { withPaymentInterceptor } from "../x402/withPaymentInterceptor";
-import { getCanisterUrl } from "../utils";
+import {
+  getCanisterUrl,
+  permitTypeToUint8,
+  getChainConfig,
+  parseCallTaskPayload,
+  parseTransferTaskPayload,
+} from "../utils";
+
+import { execCoreAbi } from "../abis/execCoreAbi";
 import type {
   CallParams,
   ExecNetwork,
@@ -72,9 +81,11 @@ function transformTask(raw: RawTask): Task {
 export class ExecClient {
   private readonly httpClient: AxiosInstance;
   private readonly signer?: Signer | MultiNetworkSigner;
+  private readonly network: ExecNetwork;
 
   constructor(config: ExecClientConfig) {
     this.signer = config.signer;
+    this.network = config.network;
 
     const canisterUrl = getCanisterUrl(config.network);
 
@@ -217,5 +228,124 @@ export class ExecClient {
       total: data.total,
       nextOffset: data.next_offset,
     };
+  }
+
+  private requireWritableSigner(): {
+    writeContract(args: unknown): Promise<Hash>;
+  } {
+    const signer = this.requireSigner();
+    if (
+      typeof (signer as { writeContract?: unknown }).writeContract !==
+      "function"
+    ) {
+      throw new Error(
+        "Signer must have writeContract method for executor operations. Use a viem WalletClient as signer."
+      );
+    }
+    return signer as unknown as { writeContract(args: unknown): Promise<Hash> };
+  }
+
+  private getExecCore(chainId: number): `0x${string}` {
+    const chainConfig = getChainConfig(this.network, chainId);
+    if (!chainConfig) {
+      throw new Error(`Chain ${chainId} not found in ${this.network}`);
+    }
+    return chainConfig.execCore;
+  }
+
+  /**
+   * Execute a call task on the ExecCore contract
+   *
+   * @param task - Task to execute
+   * @param payload - Parsed call task payload
+   * @returns Transaction hash
+   */
+  async executeCall(task: Task): Promise<Hash> {
+    const signer = this.requireWritableSigner();
+    const execCore = this.getExecCore(task.chainId);
+
+    if (!task.attestorSignature) {
+      throw new Error("Task does not have attestor signature");
+    }
+
+    const payload = parseCallTaskPayload(task.payload);
+
+    return signer.writeContract({
+      address: execCore,
+      abi: execCoreAbi,
+      functionName: "call",
+      args: [
+        task.taskId as `0x${string}`,
+        payload.token,
+        payload.target,
+        payload.data,
+        BigInt(payload.amount),
+        payload.initiator,
+        payload.referrer,
+        BigInt(payload.fee),
+        {
+          permitType: permitTypeToUint8(payload.permit.permitType),
+          permitParams: payload.permit.permitParams,
+          signature: payload.permit.signature,
+        },
+        task.attestorSignature as `0x${string}`,
+      ],
+    });
+  }
+
+  /**
+   * Execute a transfer task on the ExecCore contract
+   *
+   * @param task - Task to execute
+   * @param payload - Parsed transfer task payload
+   * @returns Transaction hash
+   */
+  async executeTransfer(task: Task): Promise<Hash> {
+    const signer = this.requireWritableSigner();
+    const execCore = this.getExecCore(task.chainId);
+
+    if (!task.attestorSignature) {
+      throw new Error("Task does not have attestor signature");
+    }
+
+    const payload = parseTransferTaskPayload(task.payload);
+
+    return signer.writeContract({
+      address: execCore,
+      abi: execCoreAbi,
+      functionName: "transfer",
+      args: [
+        task.taskId as `0x${string}`,
+        payload.token,
+        payload.recipients,
+        payload.amounts.map((a) => BigInt(a)),
+        payload.initiator,
+        payload.referrer,
+        BigInt(payload.fee),
+        {
+          permitType: permitTypeToUint8(payload.permit.permitType),
+          permitParams: payload.permit.permitParams,
+          signature: payload.permit.signature,
+        },
+        task.attestorSignature as `0x${string}`,
+      ],
+    });
+  }
+
+  /**
+   * Check if a task has been executed on the ExecCore contract
+   */
+  async isTaskExecuted(
+    publicClient: PublicClient,
+    chainId: number,
+    taskId: `0x${string}`
+  ): Promise<boolean> {
+    const execCore = this.getExecCore(chainId);
+    return publicClient.readContract({
+      address: execCore,
+      abi: execCoreAbi,
+      functionName: "executed",
+      args: [taskId],
+    });
   }
 }

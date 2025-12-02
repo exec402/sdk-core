@@ -2,7 +2,7 @@ import type { Chain, Hex, LocalAccount, Transport } from "viem";
 import { getAddress } from "viem";
 import { getNetworkId } from "../utils";
 import { evm } from "x402/types";
-import { permit2ABI } from "../abis/permit2Abi";
+import { permit2Abi } from "../../abis";
 
 import { http, createPublicClient } from "viem";
 import type { Address } from "viem";
@@ -296,7 +296,7 @@ export async function createPermit2Nonce<
     const bitIndex = nonce % BigInt(256);
     const bitmap = await walletClient.readContract({
       address: PERMIT2_ADDRESS,
-      abi: permit2ABI,
+      abi: permit2Abi,
       functionName: "nonceBitmap",
       args: [ownerAddress, wordPos],
     });
@@ -315,4 +315,3 @@ export async function createPermit2Nonce<
 
   return nonce;
 }
-
