@@ -13,11 +13,13 @@ export interface ChainContracts {
   multicallHandler: `0x${string}`;
   quoter: `0x${string}`;
   swapRouter: `0x${string}`;
+  spokePool: `0x${string}`;
 }
 
 export interface ChainTokens {
   usdc: `0x${string}`;
   weth: `0x${string}`;
+  exec?: `0x${string}`;
 }
 
 export interface ChainConfig {
