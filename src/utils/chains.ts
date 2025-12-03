@@ -5,7 +5,15 @@ export function getChainConfigs(network: ExecNetwork): ChainConfig[] {
   return network === "mainnet" ? MAINNET_CHAINS : TESTNET_CHAINS;
 }
 
-export function getChainConfig(
+export function getAllChainConfigs(): ChainConfig[] {
+  return [...MAINNET_CHAINS, ...TESTNET_CHAINS];
+}
+
+export function getChainConfig(chainId: number): ChainConfig | undefined {
+  return getAllChainConfigs().find((c) => c.chainId === chainId);
+}
+
+export function getChainConfigByNetworkAndChainId(
   network: ExecNetwork,
   chainId: number
 ): ChainConfig | undefined {

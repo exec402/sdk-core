@@ -1,14 +1,17 @@
 import axios, { type AxiosInstance } from "axios";
 import type { Hash, PublicClient } from "viem";
+import { encodeFunctionData, formatEther } from "viem";
 import type { Signer, MultiNetworkSigner } from "x402/types";
 
 import { withPaymentInterceptor } from "../x402/withPaymentInterceptor";
 import {
   getCanisterUrl,
   permitTypeToUint8,
+  getChainConfigByNetworkAndChainId,
   getChainConfig,
   parseCallTaskPayload,
   parseTransferTaskPayload,
+  getTokenPrice,
 } from "../utils";
 
 import { execCoreAbi } from "../abis/execCoreAbi";
@@ -268,11 +271,11 @@ export class ExecClient {
   }
 
   private getExecCore(chainId: number): `0x${string}` {
-    const chainConfig = getChainConfig(this.network, chainId);
+    const chainConfig = getChainConfigByNetworkAndChainId(this.network, chainId);
     if (!chainConfig) {
       throw new Error(`Chain ${chainId} not found in ${this.network}`);
     }
-    return chainConfig.execCore;
+    return chainConfig.contracts.execCore;
   }
 
   /**
@@ -369,5 +372,116 @@ export class ExecClient {
       functionName: "executed",
       args: [taskId],
     });
+  }
+
+  /**
+   * Get the chain config for the specified chainId
+   */
+  getChainConfig(chainId: number) {
+    return getChainConfig(chainId);
+  }
+
+  /**
+   * Estimate the transaction fee in USD for executing a task.
+   * Useful for executors to determine if a task is profitable.
+   *
+   * @param publicClient - Viem PublicClient instance
+   * @param task - Task to estimate fee for
+   * @returns Estimated fee in USD, or null if estimation fails
+   *
+   * @example
+   * ```ts
+   * const feeUsd = await execClient.estimateTxFee(publicClient, task);
+   * const reward = parseFloat(task.payload.fee);
+   * if (feeUsd && reward > feeUsd) {
+   *   // Profitable, execute the task
+   * }
+   * ```
+   */
+  async estimateTxFee(
+    publicClient: PublicClient,
+    task: Task
+  ): Promise<number | null> {
+    const execCore = this.getExecCore(task.chainId);
+    const chainConfig = getChainConfig(task.chainId);
+
+    if (!chainConfig || !task.attestorSignature) {
+      return null;
+    }
+
+    const { weth } = chainConfig.tokens;
+
+    // Build the call data based on task type
+    let callData: `0x${string}`;
+
+    if (task.taskType === "Call") {
+      const payload = parseCallTaskPayload(task.payload);
+      callData = encodeFunctionData({
+        abi: execCoreAbi,
+        functionName: "call",
+        args: [
+          task.taskId as `0x${string}`,
+          payload.token,
+          payload.target,
+          payload.data,
+          BigInt(payload.amount),
+          payload.initiator,
+          payload.referrer,
+          BigInt(payload.fee),
+          {
+            permitType: permitTypeToUint8(payload.permit.permitType),
+            permitParams: payload.permit.permitParams,
+            signature: payload.permit.signature,
+          },
+          task.attestorSignature as `0x${string}`,
+        ],
+      });
+    } else {
+      const payload = parseTransferTaskPayload(task.payload);
+      callData = encodeFunctionData({
+        abi: execCoreAbi,
+        functionName: "transfer",
+        args: [
+          task.taskId as `0x${string}`,
+          payload.token,
+          payload.recipients,
+          payload.amounts.map((a) => BigInt(a)),
+          payload.initiator,
+          payload.referrer,
+          BigInt(payload.fee),
+          {
+            permitType: permitTypeToUint8(payload.permit.permitType),
+            permitParams: payload.permit.permitParams,
+            signature: payload.permit.signature,
+          },
+          task.attestorSignature as `0x${string}`,
+        ],
+      });
+    }
+
+    // Estimate gas and get gas price
+    const [gasEstimate, gasPrice] = await Promise.all([
+      publicClient.estimateGas({
+        to: execCore,
+        data: callData,
+      }),
+      publicClient.getGasPrice(),
+    ]);
+
+    const estimatedFee = gasEstimate * gasPrice;
+    const estimatedFeeInEth = Number(formatEther(estimatedFee));
+
+    // Get ETH price in USD
+    const ethPrice = await getTokenPrice({
+      publicClient,
+      chainId: task.chainId,
+      tokenIn: weth,
+    });
+
+    if (!ethPrice) {
+      return null;
+    }
+
+    return estimatedFeeInEth * ethPrice.price;
   }
 }

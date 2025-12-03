@@ -8,10 +8,23 @@ export interface DefaultAsset {
   authorizationType: "eip3009" | "permit" | "permit2";
 }
 
+export interface ChainContracts {
+  execCore: `0x${string}`;
+  multicallHandler: `0x${string}`;
+  quoter: `0x${string}`;
+  swapRouter: `0x${string}`;
+}
+
+export interface ChainTokens {
+  usdc: `0x${string}`;
+  weth: `0x${string}`;
+}
+
 export interface ChainConfig {
   chainId: number;
   network: Network;
-  execCore: `0x${string}`;
   chain: Chain;
+  contracts: ChainContracts;
+  tokens: ChainTokens;
   defaultAsset: DefaultAsset;
 }

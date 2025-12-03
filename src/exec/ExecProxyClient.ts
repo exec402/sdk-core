@@ -1,7 +1,7 @@
 import axios from "axios";
 import {
   getCanisterUrl,
-  getChainConfig,
+  getChainConfigByNetworkAndChainId,
   getDefaultChainConfig,
 } from "../utils";
 import type {
@@ -100,7 +100,7 @@ export class ExecProxyClient {
   }
 
   getChainConfig(chainId: number): ChainConfig | undefined {
-    return getChainConfig(this.network, chainId);
+    return getChainConfigByNetworkAndChainId(this.network, chainId);
   }
 
   getDefaultChainConfig(): ChainConfig | undefined {
@@ -138,7 +138,7 @@ export class ExecProxyClient {
         resource: options.resource,
         description: options.description ?? "",
         mimeType: options.mimeType ?? "application/json",
-        payTo: chain.execCore,
+        payTo: chain.contracts.execCore,
         maxTimeoutSeconds: options.maxTimeoutSeconds ?? 300,
         asset: token,
         ...(options.outputSchema && { outputSchema: options.outputSchema }),

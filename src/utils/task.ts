@@ -3,6 +3,7 @@ import type {
   PermitType,
   CallTaskPayload,
   TransferTaskPayload,
+  Task,
 } from "../types";
 
 /**
@@ -21,14 +22,15 @@ export function permitTypeToUint8(permitType: PermitType): number {
   }
 }
 
-/**
- * Get task expiration time from permit data
- */
-export function getTaskExpirationTime(permit: {
-  permitType: PermitType;
-  permitParams: `0x${string}`;
-}): number {
+export function getTaskExpirationTime(task: Task): number {
   let deadline: bigint;
+
+  const payloadJson = JSON.parse(task?.payload ?? "{}");
+
+  const permit = payloadJson.permit as {
+    permitType: PermitType;
+    permitParams: `0x${string}`;
+  };
 
   switch (permit.permitType) {
     case "eip3009": {
@@ -84,11 +86,8 @@ export function getTaskExpirationTime(permit: {
 /**
  * Check if a task has expired based on its permit data
  */
-export function isTaskExpired(permit: {
-  permitType: PermitType;
-  permitParams: `0x${string}`;
-}): boolean {
-  const expirationTime = getTaskExpirationTime(permit);
+export function isTaskExpired(task: Task): boolean {
+  const expirationTime = getTaskExpirationTime(task);
   return Date.now() / 1000 > expirationTime;
 }
 
