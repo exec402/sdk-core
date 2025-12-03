@@ -1,6 +1,6 @@
 {
   "name": "@exec402/core",
-  "version": "0.1.1",
+  "version": "0.1.5",
   "description": "Core SDK for exec402 protocol",
   "keywords": [
     "exec402",
@@ -50,7 +50,6 @@
   },
   "dependencies": {
     "axios": "^1.11.0",
-    "viem": "^2.38.6",
     "x402": "^0.7.3",
     "zod": "^3.24.2"
   },
@@ -58,6 +57,7 @@
     "@types/node": "^22.0.0",
     "tsup": "^8.4.0",
     "typescript": "^5.8.3",
+    "viem": "^2.38.6",
     "vitest": "^3.0.0"
   },
   "peerDependencies": {

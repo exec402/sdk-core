@@ -196,8 +196,30 @@ export class ExecClient {
   }
 
   async getTask(taskId: string): Promise<Task> {
-    const response = await this.httpClient.get<RawTask>(`/tasks/${taskId}`);
-    return transformTask(response.data);
+    const data = await this.httpClient
+      .get<{ data: RawTask }>(`/tasks/${taskId}`)
+      .then((res) => res.data.data)
+      .catch((err) => {
+        if (err.response?.status === 404) {
+          return {
+            attestor_signature: null,
+            created_at: 0,
+            description: "",
+            executor: null,
+            payload: "{}",
+            status: "Expired" as Task["status"],
+            chain_id: 0,
+            task_id: "",
+            task_type: "Call" as Task["taskType"],
+            updated_at: 0,
+            url: null,
+            tx_hash: null,
+            block_number: null,
+          };
+        }
+        throw err;
+      });
+    return transformTask(data);
   }
 
   async listTasks(options: ListTasksOptions = {}): Promise<TaskPage> {
