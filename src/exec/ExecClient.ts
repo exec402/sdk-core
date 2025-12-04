@@ -234,6 +234,9 @@ export class ExecClient {
     if (options.chainId !== undefined) {
       params.append("chain_id", options.chainId.toString());
     }
+    if (options.initiator) {
+      params.append("initiator", options.initiator);
+    }
     if (options.offset !== undefined) {
       params.append("offset", options.offset.toString());
     }

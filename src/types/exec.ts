@@ -41,6 +41,7 @@ export interface TaskResult {
 export interface ListTasksOptions {
   status?: TaskStatus;
   chainId?: number;
+  initiator?: `0x${string}`;
   offset?: number;
   limit?: number;
 }
