@@ -72,17 +72,7 @@ async function checkPermit2Approval<
       args: [ownerAddress, PERMIT2_ADDRESS],
     });
 
-    console.log("allowance", allowance);
-
     const hasApproval = (allowance as bigint) >= BigInt(amount);
-
-    if (!hasApproval) {
-      console.log(`\n⚠️  Permit2 is not approved for this token.`);
-      console.log(`   Token: ${tokenAddress}`);
-      console.log(`   Spender: ${PERMIT2_ADDRESS}`);
-      console.log(`   Current allowance: ${allowance}`);
-      console.log(`   Required amount: ${amount}`);
-    }
 
     return hasApproval;
   } catch (error) {
@@ -100,10 +90,6 @@ async function approvePermit2<transport extends Transport, chain extends Chain>(
   }
 ): Promise<boolean> {
   try {
-    console.log(`\n🔓 Approving Permit2 to spend tokens...`);
-    console.log(`   Token: ${tokenAddress}`);
-    console.log(`   Amount: max (unlimited)`);
-
     if (!evm.isSignerWallet(walletClient)) {
       throw new Error(
         "Local account signing for permit2 requires a connected client"
@@ -134,14 +120,9 @@ async function approvePermit2<transport extends Transport, chain extends Chain>(
       args: [PERMIT2_ADDRESS, MAX_PERMIT2_AMOUNT],
     });
 
-    console.log(`   Transaction hash: ${tx}`);
-    console.log(`   Waiting for confirmation...`);
-
     const receipt = await publicClient.waitForTransactionReceipt({ hash: tx });
 
     if (receipt.status === "success") {
-      console.log(`   ✅ Approval successful!`);
-      console.log(`   Block: ${receipt.blockNumber}`);
       return true;
     } else {
       console.error(`   ❌ Approval transaction failed`);
@@ -193,8 +174,6 @@ export async function signPermit2<
     amount,
   });
 
-  console.log("hasApproval", hasApproval);
-
   // Generate a unique nonce for Permit2 SignatureTransfer
   const nonce = await createPermit2Nonce(walletClient, ownerAddress);
 
@@ -218,24 +197,6 @@ export async function signPermit2<
     },
   };
 
-  // Debug logging
-  console.log("\n🔍 Permit2 Signing Data:");
-  console.log("Domain:", {
-    name: data.domain.name,
-    chainId: data.domain.chainId,
-    verifyingContract: data.domain.verifyingContract,
-  });
-  console.log("Message:", {
-    permitted: {
-      token: tokenAddress,
-      amount: amount,
-    },
-    spender: spenderAddress,
-    nonce: nonce.toString(),
-    deadline: deadline,
-  });
-  console.log("Owner:", ownerAddress);
-
   if (evm.isSignerWallet(walletClient)) {
     if (!hasApproval) {
       const approved = await approvePermit2(walletClient, {
@@ -246,7 +207,7 @@ export async function signPermit2<
       }
     }
     const signature = await walletClient.signTypedData(data);
-    console.log("Signature:", signature);
+
     return {
       signature,
       nonce: nonce.toString(),

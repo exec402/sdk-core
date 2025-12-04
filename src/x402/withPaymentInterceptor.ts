@@ -72,7 +72,7 @@ export function withPaymentInterceptor(
           x402Version: number;
           accepts: PaymentRequirements[];
         };
-        console.log(x402Version, accepts);
+
         const parsed = accepts.map((x) => PaymentRequirementsSchema.parse(x));
 
         const network = isMultiNetworkSigner(walletClient)
@@ -110,4 +110,3 @@ export function withPaymentInterceptor(
 
   return axiosClient;
 }
-

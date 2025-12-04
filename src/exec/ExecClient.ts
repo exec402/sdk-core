@@ -271,7 +271,10 @@ export class ExecClient {
   }
 
   private getExecCore(chainId: number): `0x${string}` {
-    const chainConfig = getChainConfigByNetworkAndChainId(this.network, chainId);
+    const chainConfig = getChainConfigByNetworkAndChainId(
+      this.network,
+      chainId
+    );
     if (!chainConfig) {
       throw new Error(`Chain ${chainId} not found in ${this.network}`);
     }
@@ -387,11 +390,12 @@ export class ExecClient {
    *
    * @param publicClient - Viem PublicClient instance
    * @param task - Task to estimate fee for
+   * @param executor - Executor address to simulate the transaction from
    * @returns Estimated fee in USD, or null if estimation fails
    *
    * @example
    * ```ts
-   * const feeUsd = await execClient.estimateTxFee(publicClient, task);
+   * const feeUsd = await execClient.estimateTxFee(publicClient, task, '0x...');
    * const reward = parseFloat(task.payload.fee);
    * if (feeUsd && reward > feeUsd) {
    *   // Profitable, execute the task
@@ -400,7 +404,8 @@ export class ExecClient {
    */
   async estimateTxFee(
     publicClient: PublicClient,
-    task: Task
+    task: Task,
+    executor: `0x${string}`
   ): Promise<number | null> {
     const execCore = this.getExecCore(task.chainId);
     const chainConfig = getChainConfig(task.chainId);
@@ -416,6 +421,7 @@ export class ExecClient {
 
     if (task.taskType === "Call") {
       const payload = parseCallTaskPayload(task.payload);
+
       callData = encodeFunctionData({
         abi: execCoreAbi,
         functionName: "call",
@@ -462,6 +468,7 @@ export class ExecClient {
     // Estimate gas and get gas price
     const [gasEstimate, gasPrice] = await Promise.all([
       publicClient.estimateGas({
+        account: executor,
         to: execCore,
         data: callData,
       }),
