@@ -363,9 +363,6 @@ export class ExecClient {
     });
   }
 
-  /**
-   * Check if a task has been executed on the ExecCore contract
-   */
   async isTaskExecuted(
     publicClient: PublicClient,
     chainId: number,
@@ -380,9 +377,37 @@ export class ExecClient {
     });
   }
 
-  /**
-   * Get the chain config for the specified chainId
-   */
+  async verify(
+    publicClient: PublicClient,
+    taskId: `0x${string}`
+  ): Promise<boolean> {
+    const task = await this.getTask(taskId);
+
+    const isExecuted = await this.isTaskExecuted(
+      publicClient,
+      task.chainId,
+      taskId
+    );
+
+    // Sync canister status if needed
+    if (isExecuted && task.status === "Pending") {
+      this.refreshTask(taskId);
+    }
+
+    return isExecuted;
+  }
+
+
+  async refreshTask(taskId: string): Promise<Task> {
+    const response = await this.httpClient
+      .post<{ ok: boolean; data: RawTask; refreshed: boolean; reason: string }>(
+        `/tasks/${taskId}/refresh`
+      )
+      .then((res) => res.data);
+
+    return transformTask(response.data);
+  }
+
   getChainConfig(chainId: number) {
     return getChainConfig(chainId);
   }
