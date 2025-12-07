@@ -1,5 +1,5 @@
 import type { ChainConfig } from "../types";
-import { baseSepolia, optimismSepolia, bscTestnet } from "viem/chains";
+import { baseSepolia, optimismSepolia, bscTestnet, base } from "viem/chains";
 
 export const TESTNET_CHAINS: ChainConfig[] = [
   {
@@ -16,7 +16,6 @@ export const TESTNET_CHAINS: ChainConfig[] = [
     tokens: {
       usdc: "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
       weth: "0x4200000000000000000000000000000000000006",
-      exec: "0x4e08C92B752777e0CcE1d38bFee75dC45aec5564",
     },
     defaultAsset: {
       address: "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
@@ -71,4 +70,27 @@ export const TESTNET_CHAINS: ChainConfig[] = [
   },
 ];
 
-export const MAINNET_CHAINS: ChainConfig[] = [];
+export const MAINNET_CHAINS: ChainConfig[] = [
+  {
+    chainId: 8453,
+    network: "base",
+    chain: base,
+    contracts: {
+      execCore: "0xaAaFd28c2Ef6488c740B1Ac1fd6BA096c69bdA2a",
+      multicallHandler: "0xaa50d8a3d0158aBD34DFFBFe5c0251cf8C6d23b8",
+      quoter: "0x3d4e44Eb1374240CE5F1B871ab261CD16335B76a",
+      swapRouter: "0x2626664c2603336E57B271c5C0b26F421741e481",
+      spokePool: "0x09aea4b2242abc8bb4bb78d537a67a245a7bec64",
+    },
+    tokens: {
+      usdc: "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+      weth: "0x4200000000000000000000000000000000000006",
+    },
+    defaultAsset: {
+      address: "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+      name: "USDC",
+      decimals: 6,
+      authorizationType: "eip3009",
+    },
+  },
+];

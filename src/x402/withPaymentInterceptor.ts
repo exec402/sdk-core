@@ -1,6 +1,5 @@
 import type { AxiosInstance, AxiosError } from "axios";
 import {
-  ChainIdToNetwork,
   isMultiNetworkSigner,
   isSvmSignerWallet,
   evm,
@@ -14,7 +13,7 @@ import {
   PaymentRequirementsSchema,
 } from "./types";
 
-import { type Network } from "./network";
+import { type Network, ChainIdToNetwork } from "./network";
 import { selectPaymentRequirements } from "./selectPaymentRequirements";
 
 import { createPaymentHeader } from "./createPaymentHeader";

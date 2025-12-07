@@ -59,9 +59,9 @@ export interface RawTaskPage {
 }
 
 export interface RawCallRequest {
-  chain_id?: number;
+  chainId?: number;
   token?: string;
-  token_name?: string;
+  tokenName?: string;
   version?: string;
   target: string;
   data: string;
@@ -72,13 +72,13 @@ export interface RawCallRequest {
   description?: string;
   url?: string;
   resource?: string;
-  authorization_type?: string;
+  authorizationType?: string;
 }
 
 export interface RawTransferRequest {
-  chain_id?: number;
+  chainId?: number;
   token?: string;
-  token_name?: string;
+  tokenName?: string;
   version?: string;
   recipients: string[];
   amounts: string[];
@@ -88,7 +88,7 @@ export interface RawTransferRequest {
   description?: string;
   url?: string;
   resource?: string;
-  authorization_type?: string;
+  authorizationType?: string;
 }
 
 export interface TaskCreationResponse {

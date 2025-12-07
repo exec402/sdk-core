@@ -139,9 +139,9 @@ export class ExecClient {
       data: params.data,
       amount: params.amount,
       initiator: this.getSignerAddress(),
-      ...(params.chainId && { chain_id: params.chainId }),
+      ...(params.chainId && { chainId: params.chainId }),
       ...(params.token && { token: params.token }),
-      ...(params.tokenName && { token_name: params.tokenName }),
+      ...(params.tokenName && { tokenName: params.tokenName }),
       ...(params.version && { version: params.version }),
       ...(params.fee && { fee: params.fee }),
       ...(params.referrer && { referrer: params.referrer }),
@@ -149,7 +149,7 @@ export class ExecClient {
       ...(params.url && { url: params.url }),
       ...(params.resource && { resource: params.resource }),
       ...(params.authorizationType && {
-        authorization_type: params.authorizationType,
+        authorizationType: params.authorizationType,
       }),
     };
 
@@ -174,9 +174,9 @@ export class ExecClient {
       recipients: params.recipients,
       amounts: params.amounts,
       initiator: this.getSignerAddress(),
-      ...(params.chainId && { chain_id: params.chainId }),
+      ...(params.chainId && { chainId: params.chainId }),
       ...(params.token && { token: params.token }),
-      ...(params.tokenName && { token_name: params.tokenName }),
+      ...(params.tokenName && { tokenName: params.tokenName }),
       ...(params.version && { version: params.version }),
       ...(params.fee && { fee: params.fee }),
       ...(params.referrer && { referrer: params.referrer }),
@@ -184,7 +184,7 @@ export class ExecClient {
       ...(params.url && { url: params.url }),
       ...(params.resource && { resource: params.resource }),
       ...(params.authorizationType && {
-        authorization_type: params.authorizationType,
+        authorizationType: params.authorizationType,
       }),
     };
 
@@ -232,7 +232,7 @@ export class ExecClient {
       params.append("status", options.status);
     }
     if (options.chainId !== undefined) {
-      params.append("chain_id", options.chainId.toString());
+      params.append("chainId", options.chainId.toString());
     }
     if (options.initiator) {
       params.append("initiator", options.initiator);
