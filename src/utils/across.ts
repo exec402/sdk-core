@@ -33,6 +33,7 @@ export async function getAcrossQuote({
       ? "https://app.across.to/api/suggested-fees"
       : "https://testnet.across.to/api/suggested-fees";
   const url = new URL(baseUrl);
+  url.searchParams.set("allowUnmatchedDecimals", "true");
   url.searchParams.set("originChainId", String(sourceChainId));
   url.searchParams.set("destinationChainId", String(targetChainId));
   url.searchParams.set("inputToken", inputToken);
