@@ -1,3 +1,5 @@
+import { Address } from "viem";
+import type { ExecNetwork } from "./canister";
 import type { Task, RawTask, TaskStatus } from "./task";
 
 export type AuthorizationType = "eip3009" | "permit" | "permit2";
@@ -102,4 +104,23 @@ export interface TaskCreationResponse {
 export interface ErrorResponse {
   ok: false;
   error: string;
+}
+
+export interface AcrossQuoteParams {
+  amount: bigint;
+  sourceChainId: number;
+  targetChainId: number;
+  inputToken: Address;
+  outputToken: Address;
+  network?: ExecNetwork;
+}
+
+export interface AcrossQuote {
+  outputAmount: bigint;
+  quoteTimestamp: number;
+  fillDeadline: number;
+  exclusivityDeadline: number;
+  exclusiveRelayer:
+    | `0x${string}`
+    | "0x0000000000000000000000000000000000000000";
 }
