@@ -75,6 +75,8 @@ export async function getTokenPrice(
   const { quoter } = chainConfig.contracts;
   const { usdc, weth } = chainConfig.tokens;
 
+  const usdcDecimals = chainConfig.defaultAsset.decimals;
+
   if (tokenIn.toLowerCase() === usdc.toLowerCase()) {
     return { price: 1, fees: [0, 0] };
   }
@@ -89,7 +91,8 @@ export async function getTokenPrice(
     );
     if (!wethToUsdc) return null;
 
-    const price = Number(formatUnits(wethToUsdc.amountOut, 6)) * 10000;
+    const price =
+      Number(formatUnits(wethToUsdc.amountOut, usdcDecimals)) * 10000;
     return { price, fees: [0, wethToUsdc.fee] };
   }
 
@@ -100,7 +103,7 @@ export async function getTokenPrice(
 
   if (!tokenToWeth || !wethToUsdc) return null;
 
-  const wethPriceUsd = Number(formatUnits(wethToUsdc.amountOut, 6)) * 10000;
+  const wethPriceUsd = Number(formatUnits(wethToUsdc.amountOut, usdcDecimals)) * 10000;
   const tokenToWethRatio =
     Number(formatUnits(tokenToWeth.amountOut, 18)) * 10000;
   const price = tokenToWethRatio * wethPriceUsd;
