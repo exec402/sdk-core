@@ -12,6 +12,7 @@ import {
   parseCallTaskPayload,
   parseTransferTaskPayload,
   getTokenPrice,
+  isTaskExpired,
 } from "../utils";
 
 import { execCoreAbi } from "../abis/execCoreAbi";
@@ -383,6 +384,11 @@ export class ExecClient {
   ): Promise<boolean> {
     const task = await this.getTask(taskId);
 
+    if (isTaskExpired(task) && task.status === "Pending") {
+      this.refreshTask(taskId);
+      return false;
+    }
+
     const isExecuted = await this.isTaskExecuted(
       publicClient,
       task.chainId,
@@ -396,7 +402,6 @@ export class ExecClient {
 
     return isExecuted;
   }
-
 
   async refreshTask(taskId: string): Promise<Task> {
     const response = await this.httpClient
