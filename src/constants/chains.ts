@@ -1,5 +1,5 @@
 import type { ChainConfig } from "../types";
-import { baseSepolia, optimismSepolia, bscTestnet, base, optimism } from "viem/chains";
+import { baseSepolia, optimismSepolia, bscTestnet, base, optimism, bsc } from "viem/chains";
 
 export const TESTNET_CHAINS: ChainConfig[] = [
   {
@@ -113,6 +113,28 @@ export const MAINNET_CHAINS: ChainConfig[] = [
       name: "USDC",
       decimals: 6,
       authorizationType: "eip3009",
+    },
+  },
+  {
+    chainId: 56,
+    network: "bsc",
+    chain: bsc,
+    contracts: {
+      execCore: "0xaAaFd28c2Ef6488c740B1Ac1fd6BA096c69bdA2a",
+      multicallHandler: "0xaa50d8a3d0158aBD34DFFBFe5c0251cf8C6d23b8",
+      quoter: "0x78D78E420Da98ad378D7799bE8f4AF69033EB077",
+      swapRouter: "0xB971eF87ede563556b2ED4b1C0b0019111Dd85d2",
+      spokePool: "0x4e8E101924eDE233C13e2D8622DC8aED2872d505",
+    },
+    tokens: {
+      usdc: "0x8d0D000Ee44948FC98c9B98A4FA4921476f08B0d",
+      weth: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c",
+    },
+    defaultAsset: {
+      address: "0x8d0D000Ee44948FC98c9B98A4FA4921476f08B0d",
+      name: "USD1",
+      decimals: 18,
+      authorizationType: "permit",
     },
   },
 ];
