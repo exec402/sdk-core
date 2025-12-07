@@ -1,5 +1,5 @@
 import type { ChainConfig } from "../types";
-import { baseSepolia, optimismSepolia, bscTestnet, base } from "viem/chains";
+import { baseSepolia, optimismSepolia, bscTestnet, base, optimism } from "viem/chains";
 
 export const TESTNET_CHAINS: ChainConfig[] = [
   {
@@ -88,6 +88,28 @@ export const MAINNET_CHAINS: ChainConfig[] = [
     },
     defaultAsset: {
       address: "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+      name: "USDC",
+      decimals: 6,
+      authorizationType: "eip3009",
+    },
+  },
+  {
+    chainId: 10,
+    network: "optimism",
+    chain: optimism,
+    contracts: {
+      execCore: "0xaAaFd28c2Ef6488c740B1Ac1fd6BA096c69bdA2a",
+      multicallHandler: "0xaa50d8a3d0158aBD34DFFBFe5c0251cf8C6d23b8",
+      quoter: "0x61fFE014bA17989E743c5F6cB21bF9697530B21e",
+      swapRouter: "0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45",
+      spokePool: "0x6f26Bf09B1C792e3228e5467807a900A503c0281",
+    },
+    tokens: {
+      usdc: "0x0b2c639c533813f4aa9d7837caf62653d097ff85",
+      weth: "0x4200000000000000000000000000000000000006",
+    },
+    defaultAsset: {
+      address: "0x0b2c639c533813f4aa9d7837caf62653d097ff85",
       name: "USDC",
       decimals: 6,
       authorizationType: "eip3009",
