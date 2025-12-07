@@ -1,5 +1,5 @@
 import type { ChainConfig } from "../types";
-import { baseSepolia, optimismSepolia } from "viem/chains";
+import { baseSepolia, optimismSepolia, bscTestnet } from "viem/chains";
 
 export const TESTNET_CHAINS: ChainConfig[] = [
   {
@@ -7,7 +7,7 @@ export const TESTNET_CHAINS: ChainConfig[] = [
     network: "base-sepolia",
     chain: baseSepolia,
     contracts: {
-      execCore: "0xffD8Be849210Bae704952A2fB2b11Ef4CC3D1b13",
+      execCore: "0xC71C6Ea33561063fBFAF8B93AF7562b248F3aAFd",
       multicallHandler: "0x024aF0d1BCF4797c8707a8297dE2d7cD26373B72",
       quoter: "0xC5290058841028F1614F3A6F0F5816cAd0df5E27",
       swapRouter: "0x94cC0AaC535CCDB3C01d6787D6413C739ae12bc4",
@@ -30,7 +30,7 @@ export const TESTNET_CHAINS: ChainConfig[] = [
     network: "sepolia-optimism",
     chain: optimismSepolia,
     contracts: {
-      execCore: "0x70c8A59dEa4695cd9B61FE9fa63EbDC7A6f1323E",
+      execCore: "0x36a1983DadAaC1A293F18d1f6641C9296aB8F72c",
       multicallHandler: "0x4e08C92B752777e0CcE1d38bFee75dC45aec5564",
       quoter: "0x0FBEa6cf957d95ee9313490050F6A0DA68039404",
       swapRouter: "0x94cC0AaC535CCDB3C01d6787D6413C739ae12bc4",
@@ -45,6 +45,28 @@ export const TESTNET_CHAINS: ChainConfig[] = [
       name: "USDC",
       decimals: 6,
       authorizationType: "eip3009",
+    },
+  },
+  {
+    chainId: 97,
+    network: "bsc-testnet",
+    chain: bscTestnet,
+    contracts: {
+      execCore: "0x70c8A59dEa4695cd9B61FE9fa63EbDC7A6f1323E",
+      multicallHandler: "0x4e08C92B752777e0CcE1d38bFee75dC45aec5564",
+      quoter: "0xbC203d7f83677c7ed3F7acEc959963E7F4ECC5C2",
+      swapRouter: "0x9a489505a00cE272eAa5e07Dba6491314CaE3796",
+      spokePool: "0x0000000000000000000000000000000000000000",
+    },
+    tokens: {
+      usdc: "0x337610d27c682E347C9cD60BD4b3b107C9d34dDd",
+      weth: "0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd",
+    },
+    defaultAsset: {
+      address: "0x337610d27c682E347C9cD60BD4b3b107C9d34dDd",
+      name: "USDT",
+      decimals: 6,
+      authorizationType: "permit2",
     },
   },
 ];
