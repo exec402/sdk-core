@@ -65,10 +65,7 @@ export async function getAcrossQuote({
     throw new Error("Unexpected Across quote response");
   }
 
-  const relayFeePct = BigInt(totalRelayFeePct); // 1e18 = 100%
-  const outputAmount =
-    (amount * (BigInt(10) ** BigInt(18) - relayFeePct)) /
-    BigInt(10) ** BigInt(18);
+  const outputAmount = BigInt(json.outputAmount);
 
   return {
     outputAmount,
