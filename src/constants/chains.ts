@@ -76,7 +76,7 @@ export const MAINNET_CHAINS: ChainConfig[] = [
     network: "base",
     chain: base,
     contracts: {
-      execCore: "0xaAaFd28c2Ef6488c740B1Ac1fd6BA096c69bdA2a",
+      execCore: "0x0Ccf26b0E1E2a3258A1B15e309feF2Def6aDd4B2",
       multicallHandler: "0xaa50d8a3d0158aBD34DFFBFe5c0251cf8C6d23b8",
       quoter: "0x3d4e44Eb1374240CE5F1B871ab261CD16335B76a",
       swapRouter: "0x2626664c2603336E57B271c5C0b26F421741e481",
