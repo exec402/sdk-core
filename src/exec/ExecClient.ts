@@ -82,10 +82,18 @@ function transformTask(raw: RawTask): Task {
   };
 }
 
+interface PriceCache {
+  price: number;
+  timestamp: number;
+}
+
+const ETH_PRICE_CACHE_TTL = 10 * 60 * 1000; // 10 minutes
+
 export class ExecClient {
   private readonly httpClient: AxiosInstance;
   private readonly signer?: Signer | MultiNetworkSigner;
   private readonly network: ExecNetwork;
+  private ethPriceCache: Map<number, PriceCache> = new Map(); // chainId -> price cache
 
   constructor(config: ExecClientConfig) {
     this.signer = config.signer;
@@ -511,17 +519,46 @@ export class ExecClient {
     const estimatedFee = gasEstimate * gasPrice;
     const estimatedFeeInEth = Number(formatEther(estimatedFee));
 
-    // Get ETH price in USD
-    const ethPrice = await getTokenPrice({
-      publicClient,
-      chainId: task.chainId,
-      tokenIn: weth,
-    });
+    // Get ETH price in USD (with cache)
+    const ethPrice = await this.getEthPrice(publicClient, task.chainId, weth);
 
     if (!ethPrice) {
       return null;
     }
 
-    return estimatedFeeInEth * ethPrice.price;
+    return estimatedFeeInEth * ethPrice;
+  }
+
+  private async getEthPrice(
+    publicClient: PublicClient,
+    chainId: number,
+    weth: `0x${string}`
+  ): Promise<number | null> {
+    const now = Date.now();
+    const cached = this.ethPriceCache.get(chainId);
+
+    // Return cached price if still valid
+    if (cached && now - cached.timestamp < ETH_PRICE_CACHE_TTL) {
+      return cached.price;
+    }
+
+    // Fetch fresh price
+    const priceResult = await getTokenPrice({
+      publicClient,
+      chainId,
+      tokenIn: weth,
+    });
+
+    if (!priceResult) {
+      return null;
+    }
+
+    // Update cache
+    this.ethPriceCache.set(chainId, {
+      price: priceResult.price,
+      timestamp: now,
+    });
+
+    return priceResult.price;
   }
 }
