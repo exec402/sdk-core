@@ -68,7 +68,7 @@ export interface RawCallRequest {
   target: string;
   data: string;
   amount: string;
-  initiator: string;
+  initiator?: string;
   fee?: string;
   referrer?: string;
   description?: string;
@@ -84,7 +84,7 @@ export interface RawTransferRequest {
   version?: string;
   recipients: string[];
   amounts: string[];
-  initiator: string;
+  initiator?: string;
   fee?: string;
   referrer?: string;
   description?: string;
