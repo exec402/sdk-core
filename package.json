@@ -1,6 +1,6 @@
 {
   "name": "@exec402/core",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "description": "Core SDK for exec402 protocol",
   "keywords": [
     "exec402",

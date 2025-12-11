@@ -122,13 +122,19 @@ export class ExecProxyClient {
     }
 
     const { defaultAsset } = chain;
-    const token = options.token ?? defaultAsset.address;
-    const tokenName = options.tokenName ?? defaultAsset.name;
-    const authType =
-      options.authorizationType ?? defaultAsset.authorizationType;
-    // Permit2 always uses version "1", other authorization types default to "2"
+
+    // Resolve token, tokenName, and authorizationType following exec-canister logic
+    const { token, tokenName, authType } = this.resolveTokenConfig(
+      options.token,
+      options.tokenName,
+      options.authorizationType,
+      defaultAsset
+    );
+
+    // Permit and Permit2 always use version "1"
     const tokenVersion =
-      options.version ?? (authType === "permit2" ? "1" : "2");
+      options.version ??
+      (authType === "permit2" || authType === "permit" ? "1" : "2");
 
     return [
       {
@@ -149,6 +155,55 @@ export class ExecProxyClient {
         },
       },
     ];
+  }
+
+  private resolveTokenConfig(
+    token: `0x${string}` | undefined,
+    tokenName: string | undefined,
+    authorizationType: "eip3009" | "permit" | "permit2" | undefined,
+    defaultAsset: ChainConfig["defaultAsset"]
+  ): {
+    token: `0x${string}`;
+    tokenName: string;
+    authType: "eip3009" | "permit" | "permit2";
+  } {
+    // Case 1: Token provided and matches defaultAsset address (case-insensitive)
+    if (
+      token &&
+      token.toLowerCase() === defaultAsset.address.toLowerCase()
+    ) {
+      return {
+        token,
+        tokenName: tokenName ?? defaultAsset.name,
+        authType: authorizationType ?? defaultAsset.authorizationType,
+      };
+    }
+
+    // Case 2: Token provided but doesn't match defaultAsset
+    if (token) {
+      if (!tokenName) {
+        throw new Error(
+          "tokenName is required when using a non-default token"
+        );
+      }
+      if (!authorizationType) {
+        throw new Error(
+          "authorizationType is required when using a non-default token"
+        );
+      }
+      return {
+        token,
+        tokenName,
+        authType: authorizationType,
+      };
+    }
+
+    // Case 3: No token provided, use defaultAsset
+    return {
+      token: defaultAsset.address,
+      tokenName: tokenName ?? defaultAsset.name,
+      authType: authorizationType ?? defaultAsset.authorizationType,
+    };
   }
 
   createPaymentRequiredBody(
@@ -186,9 +241,9 @@ export class ExecProxyClient {
       data: params.data,
       amount: params.amount,
       initiator: params.initiator,
-      ...(params.chainId && { chain_id: params.chainId }),
+      ...(params.chainId && { chainId: params.chainId }),
       ...(params.token && { token: params.token }),
-      ...(params.tokenName && { token_name: params.tokenName }),
+      ...(params.tokenName && { tokenName: params.tokenName }),
       ...(params.version && { version: params.version }),
       ...(params.fee && { fee: params.fee }),
       ...(params.referrer && { referrer: params.referrer }),
@@ -196,7 +251,7 @@ export class ExecProxyClient {
       ...(params.url && { url: params.url }),
       ...(params.resource && { resource: params.resource }),
       ...(params.authorizationType && {
-        authorization_type: params.authorizationType,
+        authorizationType: params.authorizationType,
       }),
     };
 
@@ -224,9 +279,9 @@ export class ExecProxyClient {
       recipients: params.recipients,
       amounts: params.amounts,
       initiator: params.initiator,
-      ...(params.chainId && { chain_id: params.chainId }),
+      ...(params.chainId && { chainId: params.chainId }),
       ...(params.token && { token: params.token }),
-      ...(params.tokenName && { token_name: params.tokenName }),
+      ...(params.tokenName && { tokenName: params.tokenName }),
       ...(params.version && { version: params.version }),
       ...(params.fee && { fee: params.fee }),
       ...(params.referrer && { referrer: params.referrer }),
@@ -234,7 +289,7 @@ export class ExecProxyClient {
       ...(params.url && { url: params.url }),
       ...(params.resource && { resource: params.resource }),
       ...(params.authorizationType && {
-        authorization_type: params.authorizationType,
+        authorizationType: params.authorizationType,
       }),
     };
 
