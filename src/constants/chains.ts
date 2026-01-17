@@ -1,8 +1,17 @@
 import type { ChainConfig } from "../types";
-import { baseSepolia, optimismSepolia, bscTestnet, base, optimism, bsc } from "viem/chains";
+import {
+  baseSepolia,
+  optimismSepolia,
+  bscTestnet,
+  base,
+  optimism,
+  bsc,
+  xLayer,
+} from "viem/chains";
 
 export const TESTNET_CHAINS: ChainConfig[] = [
   {
+    chainType: "evm",
     chainId: 84532,
     network: "base-sepolia",
     chain: baseSepolia,
@@ -25,6 +34,7 @@ export const TESTNET_CHAINS: ChainConfig[] = [
     },
   },
   {
+    chainType: "evm",
     chainId: 11155420,
     network: "sepolia-optimism",
     chain: optimismSepolia,
@@ -47,6 +57,7 @@ export const TESTNET_CHAINS: ChainConfig[] = [
     },
   },
   {
+    chainType: "evm",
     chainId: 97,
     network: "bsc-testnet",
     chain: bscTestnet,
@@ -72,6 +83,7 @@ export const TESTNET_CHAINS: ChainConfig[] = [
 
 export const MAINNET_CHAINS: ChainConfig[] = [
   {
+    chainType: "evm",
     chainId: 8453,
     network: "base",
     chain: base,
@@ -94,6 +106,7 @@ export const MAINNET_CHAINS: ChainConfig[] = [
     },
   },
   {
+    chainType: "evm",
     chainId: 10,
     network: "optimism",
     chain: optimism,
@@ -116,6 +129,7 @@ export const MAINNET_CHAINS: ChainConfig[] = [
     },
   },
   {
+    chainType: "evm",
     chainId: 56,
     network: "bsc",
     chain: bsc,
@@ -135,6 +149,28 @@ export const MAINNET_CHAINS: ChainConfig[] = [
       name: "USD",
       decimals: 18,
       authorizationType: "permit2",
+    },
+  },
+  {
+    chainType: "evm",
+    chainId: 196,
+    network: "x-layer",
+    chain: xLayer,
+    contracts: {
+      execCore: "0xaAaFd28c2Ef6488c740B1Ac1fd6BA096c69bdA2a",
+      multicallHandler: "0xaa50d8a3d0158aBD34DFFBFe5c0251cf8C6d23b8",
+      quoter: "0x5A6f3723346aF54a4D0693bfC1718D64d4915C3e",
+      swapRouter: "0xBB069e9465BcabC4F488d21e793BDEf0F2d41D41",
+    },
+    tokens: {
+      usdc: "0x74b7F16337b8972027F6196A17a631aC6dE26d22",
+      weth: "0xe538905cf8410324e03a5a23c1c177a474d59b2b",
+    },
+    defaultAsset: {
+      address: "0x74b7F16337b8972027F6196A17a631aC6dE26d22",
+      name: "USDC",
+      decimals: 6,
+      authorizationType: "eip3009",
     },
   },
 ];

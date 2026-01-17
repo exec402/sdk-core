@@ -10,4 +10,3 @@ export {
 } from "./ExecProxyClient";
 
 export type { Signer, MultiNetworkSigner } from "x402/types";
-
