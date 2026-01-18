@@ -159,8 +159,8 @@ export const MAINNET_CHAINS: ChainConfig[] = [
     contracts: {
       execCore: "0xaAaFd28c2Ef6488c740B1Ac1fd6BA096c69bdA2a",
       multicallHandler: "0xaa50d8a3d0158aBD34DFFBFe5c0251cf8C6d23b8",
-      quoter: "0x5A6f3723346aF54a4D0693bfC1718D64d4915C3e",
-      swapRouter: "0xBB069e9465BcabC4F488d21e793BDEf0F2d41D41",
+      quoter: "0xD1b797D92d87B688193A2B976eFc8D577D204343",
+      swapRouter: "0x4f0C28f5926AFDA16bf2506D5D9e57Ea190f9bcA",
     },
     tokens: {
       usdc: "0x74b7F16337b8972027F6196A17a631aC6dE26d22",
