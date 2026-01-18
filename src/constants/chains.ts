@@ -154,7 +154,7 @@ export const MAINNET_CHAINS: ChainConfig[] = [
   {
     chainType: "evm",
     chainId: 196,
-    network: "x-layer",
+    network: "xlayer",
     chain: xLayer,
     contracts: {
       execCore: "0xaAaFd28c2Ef6488c740B1Ac1fd6BA096c69bdA2a",
